@@ -1,0 +1,384 @@
+{% extends 'detection/base.html' %}
+{% load static %}
+
+{% block title %}Sistema de Detección de Objetos{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6" data-aos="fade-right">
+                <h1 class="display-4 fw-bold mb-4">
+                    <i class="fas fa-robot me-3"></i>
+                    Detección de Objetos con IA
+                </h1>
+                <p class="lead mb-4" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">
+                    Sistema avanzado de detección de objetos en tiempo real utilizando OpenCV y Django. 
+                    Detecta rostros, cascos, celulares y otros objetos con alta precisión.
+                </p>
+                <div class="d-flex gap-3 flex-wrap">
+                    <a href="#video-section" class="btn btn-light btn-lg btn-custom shadow-lg">
+                        <i class="fas fa-play me-2"></i>Iniciar Detección
+                    </a>
+                    <a href="#upload-section" class="btn btn-outline-light btn-lg btn-custom">
+                        <i class="fas fa-upload me-2"></i>Subir Imagen
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center" data-aos="fade-left">
+                <div class="position-relative">
+                    <i class="fas fa-camera fa-10x opacity-75"></i>
+                    <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center">
+                        <div class="spinner-grow text-light" style="width: 3rem; height: 3rem; opacity: 0.3;" role="status">
+                            <span class="visually-hidden">Cargando...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics Section -->
+<div class="container py-5">
+    <div class="row text-center g-4">
+        <div class="col-md-4 mb-4" data-aos="zoom-in" data-aos-delay="100">
+            <div class="card border-0 shadow-lg h-100 stats-card">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <i class="fas fa-users fa-3x text-primary" style="filter: drop-shadow(0 5px 10px rgba(102, 126, 234, 0.4));"></i>
+                    </div>
+                    <h3 class="card-title fw-bold text-gradient">Detección de Rostros</h3>
+                    <p class="card-text text-muted">Identificación precisa de rostros humanos usando algoritmos Haar Cascade</p>
+                    <div class="mt-3">
+                        <span class="badge bg-primary">Alta Precisión</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4" data-aos="zoom-in" data-aos-delay="200">
+            <div class="card border-0 shadow-lg h-100 stats-card">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <i class="fas fa-hard-hat fa-3x text-success" style="filter: drop-shadow(0 5px 10px rgba(0, 242, 254, 0.4));"></i>
+                    </div>
+                    <h3 class="card-title fw-bold text-gradient">Detección de Cascos</h3>
+                    <p class="card-text text-muted">Identificación de equipos de protección personal en entornos laborales</p>
+                    <div class="mt-3">
+                        <span class="badge bg-success">Seguridad</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4" data-aos="zoom-in" data-aos-delay="300">
+            <div class="card border-0 shadow-lg h-100 stats-card">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <i class="fas fa-mobile-alt fa-3x text-warning" style="filter: drop-shadow(0 5px 10px rgba(240, 147, 251, 0.4));"></i>
+                    </div>
+                    <h3 class="card-title fw-bold text-gradient">Detección de Celulares</h3>
+                    <p class="card-text text-muted">Identificación de dispositivos móviles para control de uso en áreas restringidas</p>
+                    <div class="mt-3">
+                        <span class="badge" style="background: linear-gradient(135deg, #f093fb, #f5576c);">Control</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Video Detection Section -->
+<div id="video-section" class="py-5" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5" data-aos="fade-up">
+                <h2 class="display-5 fw-bold text-gradient">
+                    <i class="fas fa-video me-3"></i>
+                    Detección en Tiempo Real
+                </h2>
+                <p class="lead text-muted">Activa tu cámara para comenzar la detección de objetos en vivo</p>
+                <div class="mt-3">
+                    <span class="badge bg-success status-online me-2">
+                        <i class="fas fa-circle me-1"></i>Sistema Activo
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-lg-8" data-aos="fade-up" data-aos-delay="100">
+                <div class="card shadow-lg">
+                    <div class="card-header bg-dark text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-camera me-2"></i>
+                            Feed de Video en Vivo
+                            <span class="float-end">
+                                <i class="fas fa-signal"></i>
+                            </span>
+                        </h5>
+                    </div>                    <div class="card-body text-center p-4">
+                        {% if opencv_available %}
+                        <div id="video-container" class="mb-4">
+                            <img id="video-stream" 
+                                 src="{% url 'detection:video_feed' %}" 
+                                 class="img-fluid rounded border"
+                                 alt="Video en vivo"
+                                 style="max-width: 100%; height: auto;">
+                        </div>
+                        <div class="d-flex justify-content-center gap-3 flex-wrap">
+                            <button id="start-video" class="btn btn-success btn-lg btn-custom shadow">
+                                <i class="fas fa-play me-2"></i>Iniciar
+                            </button>
+                            <button id="stop-video" class="btn btn-danger btn-lg btn-custom shadow">
+                                <i class="fas fa-stop me-2"></i>Detener
+                            </button>
+                            <button id="capture-frame" class="btn btn-info btn-lg btn-custom shadow">
+                                <i class="fas fa-camera me-2"></i>Capturar
+                            </button>
+                        </div>
+                        {% else %}
+                        <div class="alert alert-warning shadow-sm">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>OpenCV no está disponible</strong><br>
+                            Para habilitar la detección en tiempo real, instala OpenCV:
+                            <code class="bg-white px-2 py-1 rounded">pip install opencv-python numpy</code>
+                        </div>
+                        <div class="text-center py-5">
+                            <i class="fas fa-video-slash fa-5x text-muted mb-3" style="opacity: 0.3;"></i>
+                            <p class="mt-3 text-muted fw-bold">Funcionalidad de video deshabilitada</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Detection Results -->
+                <div class="card mt-4 shadow-lg" data-aos="fade-up" data-aos-delay="200">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-chart-bar me-2"></i>
+                            Resultados en Tiempo Real
+                            <span class="float-end">
+                                <i class="fas fa-sync-alt fa-spin"></i>
+                            </span>
+                        </h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <div id="detection-results">
+                            <div class="row text-center g-3">
+                                <div class="col-md-4">
+                                    <div class="p-4 border rounded">
+                                        <i class="fas fa-users fa-2x text-primary mb-3" style="filter: drop-shadow(0 3px 8px rgba(102, 126, 234, 0.4));"></i>
+                                        <h4 id="face-count" class="mt-2 fw-bold text-primary">0</h4>
+                                        <small class="text-muted fw-semibold">Rostros Detectados</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="p-4 border rounded">
+                                        <i class="fas fa-hard-hat fa-2x mb-3" style="color: #00f2fe; filter: drop-shadow(0 3px 8px rgba(0, 242, 254, 0.4));"></i>
+                                        <h4 id="helmet-count" class="mt-2 fw-bold" style="color: #00f2fe;">0</h4>
+                                        <small class="text-muted fw-semibold">Cascos Detectados</small>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="p-4 border rounded">
+                                        <i class="fas fa-mobile-alt fa-2x mb-3" style="color: #f093fb; filter: drop-shadow(0 3px 8px rgba(240, 147, 251, 0.4));"></i>
+                                        <h4 id="phone-count" class="mt-2 fw-bold" style="color: #f093fb;">0</h4>
+                                        <small class="text-muted fw-semibold">Celulares Detectados</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Image Upload Section -->
+<div id="upload-section" class="py-5" style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5" data-aos="fade-up">
+                <h2 class="display-5 fw-bold text-gradient">
+                    <i class="fas fa-upload me-3"></i>
+                    Análisis de Imagen
+                </h2>
+                <p class="lead text-muted">Sube una imagen para detectar objetos específicos</p>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-lg-8" data-aos="fade-up" data-aos-delay="100">
+                <div class="card shadow-lg">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-image me-2"></i>
+                            Subir y Procesar Imagen
+                            <span class="float-end">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                            </span>
+                        </h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <form id="upload-form" enctype="multipart/form-data">
+                            <div class="mb-4">
+                                <label for="image-input" class="form-label">
+                                    <i class="fas fa-file-image me-2"></i>Seleccionar Imagen
+                                </label>
+                                <input type="file" 
+                                       class="form-control shadow-sm" 
+                                       id="image-input" 
+                                       name="image" 
+                                       accept="image/*" 
+                                       required>
+                                <div class="form-text">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    Formatos soportados: JPG, PNG, GIF (máx. 10MB)
+                                </div>
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary btn-lg btn-custom shadow-lg">
+                                    <i class="fas fa-search me-2"></i>
+                                    Detectar Objetos
+                                </button>
+                            </div>
+                        </form>
+                        
+                        <!-- Preview Area -->
+                        <div id="image-preview" class="mt-5 d-none">
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <h6 class="fw-bold text-muted mb-3">
+                                        <i class="fas fa-image me-2"></i>Imagen Original
+                                    </h6>
+                                    <img id="original-image" class="img-fluid rounded border shadow" alt="Imagen original">
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="fw-bold text-muted mb-3">
+                                        <i class="fas fa-eye me-2"></i>Imagen Procesada
+                                    </h6>
+                                    <img id="processed-image" class="img-fluid rounded border shadow" alt="Imagen procesada">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Results Area -->
+                        <div id="upload-results" class="mt-4 d-none">
+                            <div class="alert alert-success shadow-sm">
+                                <h5>
+                                    <i class="fas fa-check-circle me-2"></i>Detección Completada
+                                </h5>
+                                <div id="detection-summary"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Detections -->
+<div class="py-5" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5" data-aos="fade-up">
+                <h2 class="display-5 fw-bold text-gradient">
+                    <i class="fas fa-history me-3"></i>
+                    Detecciones Recientes
+                </h2>
+                <p class="lead text-muted">Historial de las últimas detecciones realizadas</p>
+            </div>
+        </div>
+        <div class="row g-4">
+            {% for detection in recent_detections %}
+            <div class="col-md-6 col-lg-4 mb-4" data-aos="fade-up" data-aos-delay="{{ forloop.counter|add:'00' }}">
+                <div class="card shadow-lg h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <h6 class="card-title fw-bold text-gradient">
+                                <i class="fas fa-fingerprint me-2"></i>Detección #{{ detection.id }}
+                            </h6>
+                            <span class="badge bg-primary shadow">
+                                <i class="fas fa-cube me-1"></i>{{ detection.detection_count }} objetos
+                            </span>
+                        </div>
+                        <p class="card-text text-muted small mb-3">
+                            <i class="fas fa-clock me-2"></i>
+                            {{ detection.created_at|date:"d/m/Y H:i" }}
+                        </p>
+                        {% if detection.objects_detected %}
+                            <div class="detected-objects">
+                                <small class="text-muted fw-semibold">
+                                    <i class="fas fa-tags me-1"></i>Objetos detectados:
+                                </small>
+                                <div class="mt-2">
+                                    {% for object in detection.objects_detected|slice:":3" %}
+                                        <span class="badge bg-secondary me-1 mb-1 shadow-sm">
+                                            <i class="fas fa-check-circle me-1"></i>{{ object }}
+                                        </span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center" data-aos="fade-up">
+                <div class="alert alert-info shadow-sm">
+                    <i class="fas fa-info-circle me-2 fa-2x mb-3 d-block"></i>
+                    <strong>No hay detecciones recientes</strong><br>
+                    ¡Sube una imagen o inicia el video para comenzar!
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Loading Modal -->
+<div class="modal fade" id="loadingModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow-lg">
+            <div class="modal-body text-center py-5">
+                <div class="mb-4">
+                    <div class="spinner-border text-primary" role="status" style="width: 4rem; height: 4rem; border-width: 0.4em;">
+                        <span class="visually-hidden">Cargando...</span>
+                    </div>
+                </div>
+                <h5 class="fw-bold text-gradient">Procesando imagen...</h5>
+                <p class="mb-0 text-muted">Por favor, espera mientras detectamos los objetos</p>
+                <div class="mt-4">
+                    <div class="progress" style="height: 5px;">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 100%; background: linear-gradient(90deg, #667eea, #764ba2);"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    // Auto-update detection results every 2 seconds
+    setInterval(updateDetectionResults, 2000);
+    
+    function updateDetectionResults() {
+        $.get('/detect/', function(data) {
+            if (data.objects_detected) {
+                let facesCount = data.objects_detected.filter(obj => obj === 'face').length;
+                let helmetsCount = data.objects_detected.filter(obj => obj === 'helmet').length;
+                let phonesCount = data.objects_detected.filter(obj => obj === 'phone').length;
+                
+                $('#face-count').text(facesCount);
+                $('#helmet-count').text(helmetsCount);
+                $('#phone-count').text(phonesCount);
+            }
+        });
+    }
+});
+</script>
+{% endblock %}
